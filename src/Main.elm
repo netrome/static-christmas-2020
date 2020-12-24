@@ -8,6 +8,7 @@ import Element.Events exposing (..)
 import Element.Font as Font
 import Element.Input as Input
 import Html exposing (Html)
+import Process
 
 
 main =
@@ -17,7 +18,7 @@ main =
 type Model
     = PromptName String
     | Action Content
-    | Done
+    | Hacking
     | Failure
 
 
@@ -54,7 +55,7 @@ update msg model =
                 , responses = responses
                 , messageBuffer = messageBuffer
                 , currentInput = ""
-                , currentRemainder = "!oY"
+                , currentRemainder = "Hej herr prins, vad är det du behöver hjälp med?"
                 }
 
         ChatInput text ->
@@ -62,8 +63,8 @@ update msg model =
                 Action content ->
                     chatStep content text
 
-                Done ->
-                    Done
+                Hacking ->
+                    Hacking
 
                 _ ->
                     Failure
@@ -89,7 +90,7 @@ forceMessageStep content text =
         Just ( c, rem ) ->
             Action
                 { content
-                    | currentInput = String.cons c content.currentInput
+                    | currentInput = content.currentInput ++ String.fromChar c
                     , currentRemainder = rem
                 }
 
@@ -104,7 +105,7 @@ sendMessage content text =
             sendMessage2 content text newRemainder newMessageBuffer
 
         _ ->
-            Done
+            Hacking
 
 
 sendMessage2 : Content -> String -> String -> List String -> Model
@@ -120,6 +121,7 @@ sendMessage2 content text newRemainder newMessageBuffer =
                     ++ [ { author = content.name, time = "13:37", text = String.dropRight 1 text }
                        , response
                        ]
+            , responses = newResponses
             , currentInput = ""
             , currentRemainder = newRemainder
             , messageBuffer = newMessageBuffer
@@ -138,44 +140,64 @@ newResponsesF content =
 
 sampleChannels : List String
 sampleChannels =
-    [ "ellie"
-    , "elm-dev"
-    , "elm-discuss"
-    , "elm-format"
-    , "elm-ui"
-    , "general"
-    , "news-and-links"
+    [ "Ännu bättre familjen over 9000"
+    , "das-famij"
+    , "Askungen"
+    , "kPrins_93"
+    , "Kalle och hans vänner"
     ]
 
 
 sampleActiveChannel : String
 sampleActiveChannel =
-    "elm-ui"
+    "kPrins_93"
 
 
 messageBuffer : List String
 messageBuffer =
-    List.map String.reverse
-        [ "Tja!"
-        , "Läget?"
-        , "Jag är awesome"
-        , "Och bäst i världen?"
-        , "Du är cool"
-        , "Jag är awesome"
-        ]
+    [ "Ja, och du behövde hjälp med pengarna?"
+    , "Jaha. Så mycket för att lita på främlingar."
+    , "Vänta, är du Batman?"
+    , "Nananananananana nananananananana..."
+    , "BATMAN!"
+    , "Så...?"
+    , "Vadå för något?"
+    , "Ja duh, det vet ju alla!"
+    , "Va? Så vad är månen gjord av då?"
+    , "Choklad!"
+    , "Choklaaaad choklaaaad a choko choko choko choklaaaad! ^^"
+    , "Neutralisera jultomten? Men då blir ju julen inställd!"
+    , "NEEEEEEEEEEEEEEEEJ!!!"
+    , "Ehm, kanske lite..."
+    , "Men hur ska jag?"
+    , "Okej jag kan väl försöka då."
+    ]
 
 
 responses : List Message
 responses =
-    [ { author = "prince", time = "13:37", text = "Hello, I am your crown prince" }
-    , { author = "prince", time = "13:37", text = "Derp in tha sherp" }
-    , { author = "prince", time = "13:37", text = "Flerpy ferpy" }
+    [ { author = "kPrins_93", time = "13:37", text = "Tack för frågan - som jag sa har jag nyligen blivit väldigt rik." }
+    , { author = "kPrins_93", time = "13:37", text = "Inte riktigt, det sa jag bara för att få din uppmärksamhet." }
+    , { author = "kPrins_93", time = "13:37", text = "Du kan lita på mig. Jag har redan spenderat alla mina pengar på att bli Batman." }
+    , { author = "kPrins_93/Batman", time = "13:37", text = "Ja det är jag." }
+    , { author = "kPrins_93/Batman", time = "13:37", text = "Är du klar?" }
+    , { author = "kPrins_93/Batman", time = "13:37", text = "ಠ_ಠ" }
+    , { author = "kPrins_93/Batman", time = "13:37", text = "Ja - jag har infiltrerat NASA och upptäckt något hemskt..." }
+    , { author = "kPrins_93/Batman", time = "13:37", text = "Du vet att månen är gjort av ost eller hur?" }
+    , { author = "kPrins_93/Batman", time = "13:37", text = "Det är en bluff! NASA har hittat på det." }
+    , { author = "kPrins_93/Batman", time = "13:37", text = "Choklad." }
+    , { author = "kPrins_93/Batman", time = "13:37", text = "Choklad!!!" }
+    , { author = "kPrins_93/Batman", time = "13:37", text = "Eller hur? Men det är inte vilken choklad som helst. I fel händer kan denna choklad användas för att neutralisera jultomten!" }
+    , { author = "kPrins_93/Batman", time = "13:37", text = "Exakt. NASA har precis lyckats extrahera ett prov av denna choklad, som de tänker använda för att stoppa julen för all framtid." }
+    , { author = "kPrins_93/Batman", time = "13:37", text = "Än är det inte för sent dock, det är har DU kommer in. Jag har hört att du kan HTML." }
+    , { author = "kPrins_93/Batman", time = "13:37", text = "Du behöver använda dina kunskaper för att hacka NASA och göra dig av med chokladen så den inte faller i fel händer." }
+    , { author = "kPrins_93/Batman", time = "13:37", text = "Tack så mycket! Chokladen är i omloppsbana rakt över Norsbol. Hela världen räknar med dig nu!" }
     ]
 
 
 initialMessages : List Message
 initialMessages =
-    [ { author = "prince", time = "13:37", text = "Welcome to my empire." }
+    [ { author = "kPrins_93", time = "13:37", text = "Hej! Vad bra att du loggat in." }
     ]
 
 
@@ -294,8 +316,30 @@ mainView model =
         Failure ->
             text "Impossibru!!!"
 
-        Done ->
-            text "Mission accomplished"
+        Hacking ->
+            hackView
+
+
+hackView : Element.Element Msg
+hackView =
+    column
+        [ Background.image "https://cutewallpaper.org/21/matrix-gif-background/4K-1000-Min.-Green-Matrix-Glowing-Motion-Background-2160p-Efect-GIF.gif"
+        , height fill
+        , width fill
+        , padding 10
+        , Font.alignLeft
+        , Font.color <| rgb255 20 255 20
+        ]
+        [ column
+            [ centerX
+            , centerY
+            , Background.color <| rgba255 40 40 40 0.5
+            , padding 10
+            ]
+            [ el [ Font.size 40, centerX, padding 40 ] (text "SUCCESS!")
+            , paragraph [] [ text "Du har precis hackat NASA med HTML. Deras satellit med det hemliga chokladprovet har kraschlandat vid den östra väggen till Norsbol 103. Det är nu ditt ansvar att göra dig av med innehållet." ]
+            ]
+        ]
 
 
 promptName : String -> Element.Element Msg
