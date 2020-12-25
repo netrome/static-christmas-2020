@@ -8,7 +8,6 @@ import Element.Events exposing (..)
 import Element.Font as Font
 import Element.Input as Input
 import Html exposing (Html)
-import Process
 
 
 main =
@@ -19,6 +18,7 @@ type Model
     = PromptName String
     | Action Content
     | Hacking
+    | Hacked
     | Failure
 
 
@@ -40,6 +40,7 @@ type Msg
     = NameUpdate String
     | NameSubmit String
     | ChatInput String
+    | DoHack
 
 
 update : Msg -> Model -> Model
@@ -68,6 +69,9 @@ update msg model =
 
                 _ ->
                     Failure
+
+        DoHack ->
+            Hacked
 
 
 chatStep : Content -> String -> Model
@@ -317,11 +321,35 @@ mainView model =
             text "Impossibru!!!"
 
         Hacking ->
-            hackView
+            hackingView
+
+        Hacked ->
+            hackedView
 
 
-hackView : Element.Element Msg
-hackView =
+hackingView : Element.Element Msg
+hackingView =
+    column
+        [ Background.image "https://media1.tenor.com/images/6ebf94800dd0d71ed77b6fea40821c43/tenor.gif?itemid=17954501"
+        , height fill
+        , width fill
+        , padding 10
+        , Font.alignLeft
+        , Font.color <| rgb255 20 255 20
+        ]
+        [ column
+            [ centerX
+            , centerY
+            , Background.color <| rgba255 40 40 40 0.5
+            , padding 10
+            ]
+            [ Input.button [ Font.size 40, centerX, padding 40 ] { onPress = Just DoHack, label = text "Hacka Nasa med HTML" }
+            ]
+        ]
+
+
+hackedView : Element.Element Msg
+hackedView =
     column
         [ Background.image "https://cutewallpaper.org/21/matrix-gif-background/4K-1000-Min.-Green-Matrix-Glowing-Motion-Background-2160p-Efect-GIF.gif"
         , height fill
@@ -344,20 +372,39 @@ hackView =
 
 promptName : String -> Element.Element Msg
 promptName name =
-    column []
-        [ text "Ditt namn"
-        , Input.text []
-            { label = Input.labelHidden "name input"
-            , onChange = NameUpdate
-            , placeholder = Nothing
-            , text = name
-            }
-        , Input.button []
-            { label =
-                text "Chatta med prinsen"
-            , onPress = Just (NameSubmit name)
-            }
+    el
+        [ height fill
+        , width fill
+        , padding 10
+        , Background.color <| rgb255 92 99 118
         ]
+    <|
+        column
+            [ Background.color <| rgb255 250 250 250
+            , centerX
+            , centerY
+            , padding 20
+            , Border.rounded 10
+            , spacing 10
+            ]
+            [ text "Ditt namn"
+            , Input.text []
+                { label = Input.labelHidden "name input"
+                , onChange = NameUpdate
+                , placeholder = Nothing
+                , text = name
+                }
+            , Input.button
+                [ padding 10
+                , Font.color <| rgb255 250 250 250
+                , Background.color <| rgb255 112 189 148
+                , Border.rounded 3
+                ]
+                { label =
+                    text "Logga in"
+                , onPress = Just (NameSubmit name)
+                }
+            ]
 
 
 viewAction : Content -> Element.Element Msg
